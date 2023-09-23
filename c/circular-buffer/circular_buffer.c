@@ -1,8 +1,22 @@
 #include "circular_buffer.h"
+#include <asm-generic/errno.h>
+#include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+// int main() {
+//
+//   size_t capacity = 1;
+//   buffer_value_t read_value = 0;
+//
+//   circular_buffer_t *buffer = new_circular_buffer(capacity);
+//   int16_t status = read(buffer, &read_value);
+//   printf("%d\n", status);
+//   delete_buffer(buffer);
+//   return 0;
+// }
 
 circular_buffer_t *new_circular_buffer(size_t capacity) {
 
@@ -19,6 +33,8 @@ circular_buffer_t *new_circular_buffer(size_t capacity) {
   buffer->capacity = capacity;
   buffer->count = 0;
 
+  clear_buffer(buffer);
+
   return buffer;
 }
 
@@ -27,49 +43,48 @@ int16_t read(circular_buffer_t *buffer, buffer_value_t *valAddr) {
   if (buffer->count > 0) {
 
     *valAddr = *buffer->current_old;
-    if (buffer->current_old == buffer->end) {
-      buffer->current_old = buffer->start;
-    } else {
-      buffer->current_old++;
-    }
+    movePointer(buffer, &buffer->current_old);
     buffer->count--;
 
     return 0;
 
   } else {
+    errno = ENODATA;
     return EXIT_FAILURE;
   }
 }
+
+void movePointer(circular_buffer_t *buffer, buffer_value_t **ptr) {
+  if (*ptr == buffer->end) {
+    *ptr = buffer->start;
+  } else {
+    *ptr += 1;
+  }
+}
+
 int16_t overwrite(circular_buffer_t *buffer, buffer_value_t value) {
 
-  *(buffer->current_new) = value;
-  buffer->count++;
-
-  if (buffer->current_new == buffer->end) {
-    buffer->current_new = buffer->start;
+  if (buffer->capacity > buffer->count) {
+    return write(buffer, value);
   } else {
-    buffer->current_new++;
+    *(buffer->current_new) = value;
+    movePointer(buffer, &buffer->current_new);
+    movePointer(buffer, &buffer->current_old);
   }
-
   return 0;
 }
 int16_t write(circular_buffer_t *buffer, buffer_value_t value) {
 
-  if (buffer->capacity >= buffer->count) {
+  if (buffer->capacity > buffer->count) {
 
     *(buffer->current_new) = value;
     buffer->count++;
 
-    if (buffer->current_new == buffer->end) {
-      buffer->current_new = buffer->start;
-    } else {
+    movePointer(buffer, &buffer->current_new);
 
-      buffer->current_new++;
-    }
-
-    printf("count %zu\n", buffer->count);
     return 0;
   } else {
+    errno = ENOBUFS;
     return EXIT_FAILURE;
   }
 }
@@ -80,6 +95,7 @@ void clear_buffer(circular_buffer_t *buffer) {
   for (size_t i = 0; i < buffer->capacity; i++) {
     *(temp + i) = 0;
   }
+  buffer->count = 0;
 }
 
 void delete_buffer(circular_buffer_t *buffer) {
