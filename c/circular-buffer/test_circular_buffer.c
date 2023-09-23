@@ -53,8 +53,6 @@ static void test_reading_empty_buffer_fails(void) {
 
   circular_buffer_t *buffer = new_circular_buffer(capacity);
   int16_t status = read(buffer, &read_value);
-  printf("%d\n", EXIT_FAILURE);
-  printf("%d\n", ENODATA);
   TEST_ASSERT_EQUAL_INT16(EXIT_FAILURE, status);
   TEST_ASSERT_EQUAL_INT16(ENODATA, errno);
 

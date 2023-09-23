@@ -27,6 +27,4 @@ void clear_buffer(circular_buffer_t *);
 void delete_buffer(circular_buffer_t *);
 void movePointer(circular_buffer_t *, buffer_value_t **);
 
-int main();
-
 #endif

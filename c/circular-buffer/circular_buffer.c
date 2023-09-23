@@ -1,22 +1,9 @@
 #include "circular_buffer.h"
-#include <asm-generic/errno.h>
 #include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-// int main() {
-//
-//   size_t capacity = 1;
-//   buffer_value_t read_value = 0;
-//
-//   circular_buffer_t *buffer = new_circular_buffer(capacity);
-//   int16_t status = read(buffer, &read_value);
-//   printf("%d\n", status);
-//   delete_buffer(buffer);
-//   return 0;
-// }
 
 circular_buffer_t *new_circular_buffer(size_t capacity) {
 
