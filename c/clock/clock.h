@@ -3,12 +3,14 @@
 
 #include <stdbool.h>
 
-#define MAX_STR_LEN (5 + 1)   // "##:##\0"
+#define MAX_STR_LEN (5 + 1) // "##:##\0"
 
 typedef struct {
-   char text[MAX_STR_LEN];
+  char text[MAX_STR_LEN];
 } clock_t;
 
+int get_hour(char text[]);
+int get_minute(char text[]);
 clock_t clock_create(int hour, int minute);
 clock_t clock_add(clock_t clock, int minute_add);
 clock_t clock_subtract(clock_t clock, int minute_subtract);
