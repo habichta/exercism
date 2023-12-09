@@ -1,8 +1,8 @@
 #ifndef SIEVE_H
 #define SIEVE_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /// Calculate at most `max_primes` prime numbers in the interval [2,limit]
 /// using the Sieve of Eratosthenes and store the prime numbers in `primes`
